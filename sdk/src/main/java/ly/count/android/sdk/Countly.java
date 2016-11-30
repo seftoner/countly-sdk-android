@@ -122,7 +122,7 @@ public class Countly {
      * Creates a new ConnectionQueue and initializes the session timer.
      */
     Countly() {
-        connectionQueue_ = new ConnectionQueue();
+        connectionQueue_ = new ConnectionQueue(new DeviceInfo());
         Countly.userData = new UserData(connectionQueue_);
         timerService_ = Executors.newSingleThreadScheduledExecutor();
         timerService_.scheduleWithFixedDelay(new Runnable() {
@@ -133,6 +133,10 @@ public class Countly {
         }, TIMER_DELAY_IN_SECONDS, TIMER_DELAY_IN_SECONDS, TimeUnit.SECONDS);
     }
 
+    public Countly setDeviceInfoProvider(IDeviceInfo deviceInfo) {
+        this.connectionQueue_ = new ConnectionQueue(new DeviceInfo());
+        return this;
+    }
 
     /**
      * Initializes the Countly SDK. Call from your main Activity's onCreate() method.

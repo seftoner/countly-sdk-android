@@ -52,8 +52,8 @@ public class ConnectionQueueTests extends AndroidTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        freshConnQ = new ConnectionQueue();
-        connQ = new ConnectionQueue();
+        freshConnQ = new ConnectionQueue(new DeviceInfo());
+        connQ = new ConnectionQueue(new DeviceInfo());
         connQ.setAppKey("abcDeFgHiJkLmNoPQRstuVWxyz");
         connQ.setServerURL("http://countly.coupons.com");
         connQ.setContext(getContext());
@@ -183,6 +183,7 @@ public class ConnectionQueueTests extends AndroidTestCase {
     }
 
     public void testBeginSession() throws JSONException, UnsupportedEncodingException {
+        IDeviceInfo deviceInfo = new DeviceInfo();
         connQ.beginSession();
         final ArgumentCaptor<String> arg = ArgumentCaptor.forClass(String.class);
         verify(connQ.getCountlyStore()).addConnection(arg.capture());
@@ -201,7 +202,7 @@ public class ConnectionQueueTests extends AndroidTestCase {
         assertEquals("1", queryParams.get("begin_session"));
         // validate metrics
         final JSONObject actualMetrics = new JSONObject(queryParams.get("metrics"));
-        final String metricsJsonStr = URLDecoder.decode(DeviceInfo.getMetrics(getContext()), "UTF-8");
+        final String metricsJsonStr = URLDecoder.decode(deviceInfo.getMetrics(getContext()), "UTF-8");
         final JSONObject expectedMetrics = new JSONObject(metricsJsonStr);
         assertEquals(expectedMetrics.length(), actualMetrics.length());
         final Iterator actualMetricsKeyIterator = actualMetrics.keys();
