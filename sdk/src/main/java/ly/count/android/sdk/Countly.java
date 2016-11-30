@@ -122,7 +122,7 @@ public class Countly {
      * Creates a new ConnectionQueue and initializes the session timer.
      */
     Countly() {
-        connectionQueue_ = new ConnectionQueue(new DeviceInfo());
+        connectionQueue_ = new ConnectionQueue();
         Countly.userData = new UserData(connectionQueue_);
         timerService_ = Executors.newSingleThreadScheduledExecutor();
         timerService_.scheduleWithFixedDelay(new Runnable() {
@@ -133,8 +133,13 @@ public class Countly {
         }, TIMER_DELAY_IN_SECONDS, TIMER_DELAY_IN_SECONDS, TimeUnit.SECONDS);
     }
 
+    /**
+     *  Set custom device info provider. For example you want use different app version(not defined in gradle config file)
+     * @param deviceInfo implementation of device info provider
+     * @return Countly instance for easy method chaining
+     */
     public Countly setDeviceInfoProvider(IDeviceInfo deviceInfo) {
-        this.connectionQueue_ = new ConnectionQueue(new DeviceInfo());
+        this.connectionQueue_.setDeviceInfoProvider(deviceInfo);
         return this;
     }
 

@@ -53,7 +53,13 @@ public class ConnectionQueue {
     private SSLContext sslContext_;
     private IDeviceInfo deviceInfo;
 
+    public ConnectionQueue() {}
+
     public ConnectionQueue(IDeviceInfo deviceInfo) {
+        this.deviceInfo = deviceInfo;
+    }
+
+    public void setDeviceInfoProvider(IDeviceInfo deviceInfo) {
         this.deviceInfo = deviceInfo;
     }
 
