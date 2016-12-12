@@ -52,8 +52,8 @@ public class ConnectionQueueTests extends AndroidTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        freshConnQ = new ConnectionQueue();
-        connQ = new ConnectionQueue();
+        freshConnQ = new ConnectionQueue(new DeviceInfo());
+        connQ = new ConnectionQueue(new DeviceInfo());
         connQ.setAppKey("abcDeFgHiJkLmNoPQRstuVWxyz");
         connQ.setServerURL("http://countly.coupons.com");
         connQ.setContext(getContext());
@@ -95,7 +95,8 @@ public class ConnectionQueueTests extends AndroidTestCase {
     }
 
     public void testDeviceId() {
-        final DeviceId deviceId = new DeviceId("blah");
+        final CountlyStore store = new CountlyStore(getContext());
+        final DeviceId deviceId = new DeviceId(store, "blah");
         freshConnQ.setDeviceId(deviceId);
         assertSame(deviceId, freshConnQ.getDeviceId());
     }
@@ -182,6 +183,7 @@ public class ConnectionQueueTests extends AndroidTestCase {
     }
 
     public void testBeginSession() throws JSONException, UnsupportedEncodingException {
+        IDeviceInfo deviceInfo = new DeviceInfo();
         connQ.beginSession();
         final ArgumentCaptor<String> arg = ArgumentCaptor.forClass(String.class);
         verify(connQ.getCountlyStore()).addConnection(arg.capture());
@@ -193,14 +195,14 @@ public class ConnectionQueueTests extends AndroidTestCase {
         assertEquals(connQ.getAppKey(), queryParams.get("app_key"));
         assertNull(queryParams.get("device_id"));
         final long curTimestamp = Countly.currentTimestampMs();
-        final int actualTimestamp = Integer.parseInt(queryParams.get("timestamp"));
+        final long actualTimestamp = Long.parseLong(queryParams.get("timestamp"));
         // this check attempts to account for minor time changes during this test
         assertTrue(((curTimestamp-1) <= actualTimestamp) && ((curTimestamp+1) >= actualTimestamp));
         assertEquals(Countly.COUNTLY_SDK_VERSION_STRING, queryParams.get("sdk_version"));
         assertEquals("1", queryParams.get("begin_session"));
         // validate metrics
         final JSONObject actualMetrics = new JSONObject(queryParams.get("metrics"));
-        final String metricsJsonStr = URLDecoder.decode(DeviceInfo.getMetrics(getContext()), "UTF-8");
+        final String metricsJsonStr = URLDecoder.decode(deviceInfo.getMetrics(getContext()), "UTF-8");
         final JSONObject expectedMetrics = new JSONObject(metricsJsonStr);
         assertEquals(expectedMetrics.length(), actualMetrics.length());
         final Iterator actualMetricsKeyIterator = actualMetrics.keys();
@@ -241,7 +243,7 @@ public class ConnectionQueueTests extends AndroidTestCase {
         assertEquals(connQ.getAppKey(), queryParams.get("app_key"));
         assertNull(queryParams.get("device_id"));
         final long curTimestamp = Countly.currentTimestampMs();
-        final int actualTimestamp = Integer.parseInt(queryParams.get("timestamp"));
+        final long actualTimestamp = Long.parseLong(queryParams.get("timestamp"));
         // this check attempts to account for minor time changes during this test
         assertTrue(((curTimestamp-1) <= actualTimestamp) && ((curTimestamp+1) >= actualTimestamp));
         assertEquals("60", queryParams.get("session_duration"));
@@ -268,7 +270,7 @@ public class ConnectionQueueTests extends AndroidTestCase {
         assertEquals(connQ.getAppKey(), queryParams.get("app_key"));
         assertNull(queryParams.get("device_id"));
         final long curTimestamp = Countly.currentTimestampMs();
-        final int actualTimestamp = Integer.parseInt(queryParams.get("timestamp"));
+        final long actualTimestamp = Long.parseLong(queryParams.get("timestamp"));
         // this check attempts to account for minor time changes during this test
         assertTrue(((curTimestamp-1) <= actualTimestamp) && ((curTimestamp+1) >= actualTimestamp));
         assertFalse(queryParams.containsKey("session_duration"));
@@ -287,7 +289,7 @@ public class ConnectionQueueTests extends AndroidTestCase {
         assertEquals(connQ.getAppKey(), queryParams.get("app_key"));
         assertNull(queryParams.get("device_id"));
         final long curTimestamp = Countly.currentTimestampMs();
-        final int actualTimestamp = Integer.parseInt(queryParams.get("timestamp"));
+        final long actualTimestamp = Long.parseLong(queryParams.get("timestamp"));
         // this check attempts to account for minor time changes during this test
         assertTrue(((curTimestamp-1) <= actualTimestamp) && ((curTimestamp+1) >= actualTimestamp));
         assertFalse(queryParams.containsKey("session_duration"));
@@ -306,7 +308,7 @@ public class ConnectionQueueTests extends AndroidTestCase {
         assertEquals(connQ.getAppKey(), queryParams.get("app_key"));
         assertNull(queryParams.get("device_id"));
         final long curTimestamp = Countly.currentTimestampMs();
-        final int actualTimestamp = Integer.parseInt(queryParams.get("timestamp"));
+        final long actualTimestamp = Long.parseLong(queryParams.get("timestamp"));
         // this check attempts to account for minor time changes during this test
         assertTrue(((curTimestamp-1) <= actualTimestamp) && ((curTimestamp+1) >= actualTimestamp));
         assertEquals("1", queryParams.get("end_session"));
@@ -335,7 +337,7 @@ public class ConnectionQueueTests extends AndroidTestCase {
         assertEquals(connQ.getAppKey(), queryParams.get("app_key"));
         assertNull(queryParams.get("device_id"));
         final long curTimestamp = Countly.currentTimestampMs();
-        final int actualTimestamp = Integer.parseInt(queryParams.get("timestamp"));
+        final long actualTimestamp = Long.parseLong(queryParams.get("timestamp"));
         // this check attempts to account for minor time changes during this test
         assertTrue(((curTimestamp - 1) <= actualTimestamp) && ((curTimestamp + 1) >= actualTimestamp));
         assertEquals(eventData, queryParams.get("events"));

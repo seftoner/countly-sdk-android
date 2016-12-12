@@ -42,25 +42,25 @@ import java.util.Locale;
  * It is important to call setDeviceID early, before logging any session or custom
  * event data.
  */
-class DeviceInfo {
+public class DeviceInfo implements IDeviceInfo {
     /**
      * Returns the display name of the current operating system.
      */
-    static String getOS() {
+    public String getOS() {
         return "Android";
     }
 
     /**
      * Returns the current operating system version as a displayable string.
      */
-    static String getOSVersion() {
+    public String getOSVersion() {
         return android.os.Build.VERSION.RELEASE;
     }
 
     /**
      * Returns the current device model.
      */
-    static String getDevice() {
+    public String getDevice() {
         return android.os.Build.MODEL;
     }
 
@@ -72,7 +72,7 @@ class DeviceInfo {
      * @param context context to use to retrieve the current WindowManager
      * @return a string in the format "WxH", or the empty string "" if resolution cannot be determined
      */
-    static String getResolution(final Context context) {
+    public String getResolution(final Context context) {
         // user reported NPE in this method; that means either getSystemService or getDefaultDisplay
         // were returning null, even though the documentation doesn't say they should do so; so now
         // we catch Throwable and return empty string if that happens
@@ -98,7 +98,7 @@ class DeviceInfo {
      * @return a string constant representing the current display density, or the
      *         empty string if the density is unknown
      */
-    static String getDensity(final Context context) {
+    public String getDensity(final Context context) {
         String densityStr = "";
         final int density = context.getResources().getDisplayMetrics().densityDpi;
         switch (density) {
@@ -137,7 +137,7 @@ class DeviceInfo {
      * @return the display name of the current network operator, or the empty
      *         string if it cannot be accessed or determined
      */
-    static String getCarrier(final Context context) {
+    public String getCarrier(final Context context) {
         String carrier = "";
         final TelephonyManager manager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         if (manager != null) {
@@ -155,7 +155,7 @@ class DeviceInfo {
     /**
      * Returns the current locale (ex. "en_US").
      */
-    static String getLocale() {
+    public String getLocale() {
         final Locale locale = Locale.getDefault();
         return locale.getLanguage() + "_" + locale.getCountry();
     }
@@ -165,7 +165,7 @@ class DeviceInfo {
      * context's package info versionName field, or "1.0" if versionName
      * is not present.
      */
-    static String getAppVersion(final Context context) {
+    public String getAppVersion(final Context context) {
         String result = Countly.DEFAULT_APP_VERSION;
         try {
             result = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
@@ -181,7 +181,7 @@ class DeviceInfo {
     /**
      * Returns the package name of the app that installed this app
      */
-    static String getStore(final Context context) {
+    public String getStore(final Context context) {
         String result = "";
         if(android.os.Build.VERSION.SDK_INT >= 3 ) {
             try {
@@ -207,7 +207,7 @@ class DeviceInfo {
      * See the following link for more info:
      * https://count.ly/resources/reference/server-api
      */
-    static String getMetrics(final Context context) {
+    public String getMetrics(final Context context) {
         final JSONObject json = new JSONObject();
 
         fillJSONIfValuesNotEmpty(json,
@@ -239,7 +239,7 @@ class DeviceInfo {
      * @param json JSONObject to fill
      * @param objects varargs of this kind: key1, value1, key2, value2, ...
      */
-    static void fillJSONIfValuesNotEmpty(final JSONObject json, final String ... objects) {
+    public void fillJSONIfValuesNotEmpty(final JSONObject json, final String ... objects) {
         try {
             if (objects.length > 0 && objects.length % 2 == 0) {
                 for (int i = 0; i < objects.length; i += 2) {

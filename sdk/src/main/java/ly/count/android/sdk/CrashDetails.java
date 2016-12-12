@@ -365,18 +365,18 @@ class CrashDetails {
      * See the following link for more info:
      * http://resources.count.ly/v1.0/docs/i
      */
-    static String getCrashData(final Context context, String error, Boolean nonfatal) {
+    static String getCrashData(final Context context, String error, Boolean nonfatal, IDeviceInfo deviceInfo) {
         final JSONObject json = new JSONObject();
 
         fillJSONIfValuesNotEmpty(json,
                 "_error", error,
                 "_nonfatal", Boolean.toString(nonfatal),
                 "_logs", getLogs(),
-                "_device", DeviceInfo.getDevice(),
-                "_os", DeviceInfo.getOS(),
-                "_os_version", DeviceInfo.getOSVersion(),
-                "_resolution", DeviceInfo.getResolution(context),
-                "_app_version", DeviceInfo.getAppVersion(context),
+                "_device", deviceInfo.getDevice(),
+                "_os", deviceInfo.getOS(),
+                "_os_version", deviceInfo.getOSVersion(),
+                "_resolution", deviceInfo.getResolution(context),
+                "_app_version", deviceInfo.getAppVersion(context),
                 "_manufacture", getManufacturer(),
                 "_cpu", getCpu(),
                 "_opengl", getOpenGL(context),
@@ -391,7 +391,7 @@ class CrashDetails {
                 "_online", isOnline(context),
                 "_muted", isMuted(context),
                 "_background", isInBackground()
-                );
+        );
 
         try {
             json.put("_custom", getCustomSegments());

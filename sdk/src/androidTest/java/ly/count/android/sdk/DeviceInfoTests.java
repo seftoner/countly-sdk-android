@@ -45,39 +45,46 @@ import static org.mockito.Mockito.when;
 public class DeviceInfoTests extends AndroidTestCase {
 
     public void testGetOS() {
-        assertEquals("Android", DeviceInfo.getOS());
+        IDeviceInfo info = new DeviceInfo();
+        assertEquals("Android", info.getOS());
     }
 
     public void testGetOSVersion() {
-        assertEquals(android.os.Build.VERSION.RELEASE, DeviceInfo.getOSVersion());
+        IDeviceInfo info = new DeviceInfo();
+        assertEquals(android.os.Build.VERSION.RELEASE, info.getOSVersion());
     }
 
     public void testGetDevice() {
-        assertEquals(android.os.Build.MODEL, DeviceInfo.getDevice());
+        IDeviceInfo info = new DeviceInfo();
+        assertEquals(android.os.Build.MODEL, info.getDevice());
     }
 
     public void testGetResolution() {
+        IDeviceInfo info = new DeviceInfo();
         final DisplayMetrics metrics = new DisplayMetrics();
         ((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getMetrics(metrics);
         final String expected = metrics.widthPixels + "x" + metrics.heightPixels;
-        assertEquals(expected, DeviceInfo.getResolution(getContext()));
+        assertEquals(expected,  info.getResolution(getContext()));
     }
 
     public void testGetResolution_getWindowManagerReturnsNull() {
+        IDeviceInfo info = new DeviceInfo();
         final Context mockContext = mock(Context.class);
         when(mockContext.getSystemService(Context.WINDOW_SERVICE)).thenReturn(null);
-        assertEquals("", DeviceInfo.getResolution(mockContext));
+        assertEquals("", info.getResolution(mockContext));
     }
 
     public void testGetResolution_getDefaultDisplayReturnsNull() {
+        IDeviceInfo info = new DeviceInfo();
         final WindowManager mockWindowMgr = mock(WindowManager.class);
         when(mockWindowMgr.getDefaultDisplay()).thenReturn(null);
         final Context mockContext = mock(Context.class);
         when(mockContext.getSystemService(Context.WINDOW_SERVICE)).thenReturn(mockWindowMgr);
-        assertEquals("", DeviceInfo.getResolution(mockContext));
+        assertEquals("", info.getResolution(mockContext));
     }
 
     private Context mockContextForTestingDensity(final int density) {
+        IDeviceInfo info = new DeviceInfo();
         final DisplayMetrics metrics = new DisplayMetrics();
         metrics.densityDpi = density;
         final Resources mockResources = mock(Resources.class);
@@ -88,67 +95,74 @@ public class DeviceInfoTests extends AndroidTestCase {
     }
 
     public void testGetDensity() {
+        IDeviceInfo info = new DeviceInfo();
         Context mockContext = mockContextForTestingDensity(DisplayMetrics.DENSITY_LOW);
-        assertEquals("LDPI", DeviceInfo.getDensity(mockContext));
+        assertEquals("LDPI", info.getDensity(mockContext));
         mockContext = mockContextForTestingDensity(DisplayMetrics.DENSITY_MEDIUM);
-        assertEquals("MDPI", DeviceInfo.getDensity(mockContext));
+        assertEquals("MDPI", info.getDensity(mockContext));
         mockContext = mockContextForTestingDensity(DisplayMetrics.DENSITY_TV);
-        assertEquals("TVDPI", DeviceInfo.getDensity(mockContext));
+        assertEquals("TVDPI", info.getDensity(mockContext));
         mockContext = mockContextForTestingDensity(DisplayMetrics.DENSITY_HIGH);
-        assertEquals("HDPI", DeviceInfo.getDensity(mockContext));
+        assertEquals("HDPI", info.getDensity(mockContext));
         mockContext = mockContextForTestingDensity(DisplayMetrics.DENSITY_XHIGH);
-        assertEquals("XHDPI", DeviceInfo.getDensity(mockContext));
+        assertEquals("XHDPI", info.getDensity(mockContext));
         mockContext = mockContextForTestingDensity(DisplayMetrics.DENSITY_XXHIGH);
-        assertEquals("XXHDPI", DeviceInfo.getDensity(mockContext));
+        assertEquals("XXHDPI", info.getDensity(mockContext));
         mockContext = mockContextForTestingDensity(DisplayMetrics.DENSITY_XXXHIGH);
-        assertEquals("XXXHDPI", DeviceInfo.getDensity(mockContext));
+        assertEquals("XXXHDPI", info.getDensity(mockContext));
         mockContext = mockContextForTestingDensity(DisplayMetrics.DENSITY_400);
-        assertEquals("XMHDPI", DeviceInfo.getDensity(mockContext));
+        assertEquals("XMHDPI", info.getDensity(mockContext));
         mockContext = mockContextForTestingDensity(0);
-        assertEquals("", DeviceInfo.getDensity(mockContext));
+        assertEquals("", info.getDensity(mockContext));
     }
 
     public void testGetCarrier_nullTelephonyManager() {
+        IDeviceInfo info = new DeviceInfo();
         final Context mockContext = mock(Context.class);
         when(mockContext.getSystemService(Context.TELEPHONY_SERVICE)).thenReturn(null);
-        assertEquals("", DeviceInfo.getCarrier(mockContext));
+        assertEquals("", info.getCarrier(mockContext));
     }
 
     public void testGetCarrier_nullNetOperator() {
+        IDeviceInfo info = new DeviceInfo();
         final TelephonyManager mockTelephonyManager = mock(TelephonyManager.class);
         when(mockTelephonyManager.getNetworkOperatorName()).thenReturn(null);
         final Context mockContext = mock(Context.class);
         when(mockContext.getSystemService(Context.TELEPHONY_SERVICE)).thenReturn(mockTelephonyManager);
-        assertEquals("", DeviceInfo.getCarrier(mockContext));
+        assertEquals("", info.getCarrier(mockContext));
     }
 
     public void testGetCarrier_emptyNetOperator() {
+        IDeviceInfo info = new DeviceInfo();
         final TelephonyManager mockTelephonyManager = mock(TelephonyManager.class);
         when(mockTelephonyManager.getNetworkOperatorName()).thenReturn("");
         final Context mockContext = mock(Context.class);
         when(mockContext.getSystemService(Context.TELEPHONY_SERVICE)).thenReturn(mockTelephonyManager);
-        assertEquals("", DeviceInfo.getCarrier(mockContext));
+        assertEquals("", info.getCarrier(mockContext));
     }
 
     public void testGetCarrier() {
+        IDeviceInfo info = new DeviceInfo();
         final TelephonyManager mockTelephonyManager = mock(TelephonyManager.class);
         when(mockTelephonyManager.getNetworkOperatorName()).thenReturn("Verizon");
         final Context mockContext = mock(Context.class);
         when(mockContext.getSystemService(Context.TELEPHONY_SERVICE)).thenReturn(mockTelephonyManager);
-        assertEquals("Verizon", DeviceInfo.getCarrier(mockContext));
+        assertEquals("Verizon", info.getCarrier(mockContext));
     }
 
     public void testGetLocale() {
+        IDeviceInfo info = new DeviceInfo();
         final Locale defaultLocale = Locale.getDefault();
         try {
             Locale.setDefault(new Locale("ab", "CD"));
-            assertEquals("ab_CD", DeviceInfo.getLocale());
+            assertEquals("ab_CD", info.getLocale());
         } finally {
             Locale.setDefault(defaultLocale);
         }
     }
 
     public void testGetAppVersion() throws PackageManager.NameNotFoundException {
+        IDeviceInfo info = new DeviceInfo();
         final PackageInfo pkgInfo = new PackageInfo();
         pkgInfo.versionName = "42.0";
         final String fakePkgName = "i.like.chicken";
@@ -157,51 +171,57 @@ public class DeviceInfoTests extends AndroidTestCase {
         final Context mockContext = mock(Context.class);
         when(mockContext.getPackageName()).thenReturn(fakePkgName);
         when(mockContext.getPackageManager()).thenReturn(mockPkgMgr);
-        assertEquals("42.0", DeviceInfo.getAppVersion(mockContext));
+        assertEquals("42.0", info.getAppVersion(mockContext));
     }
 
     public void testGetAppVersion_pkgManagerThrows() throws PackageManager.NameNotFoundException {
+        IDeviceInfo info = new DeviceInfo();
         final String fakePkgName = "i.like.chicken";
         final PackageManager mockPkgMgr = mock(PackageManager.class);
         when(mockPkgMgr.getPackageInfo(fakePkgName, 0)).thenThrow(new PackageManager.NameNotFoundException());
         final Context mockContext = mock(Context.class);
         when(mockContext.getPackageName()).thenReturn(fakePkgName);
         when(mockContext.getPackageManager()).thenReturn(mockPkgMgr);
-        assertEquals("1.0", DeviceInfo.getAppVersion(mockContext));
+        assertEquals("1.0", info.getAppVersion(mockContext));
     }
 
     public void testGetMetrics() throws UnsupportedEncodingException, JSONException {
+        IDeviceInfo info = new DeviceInfo();
         final JSONObject json = new JSONObject();
-        json.put("_device", DeviceInfo.getDevice());
-        json.put("_os", DeviceInfo.getOS());
-        json.put("_os_version", DeviceInfo.getOSVersion());
-        if (!"".equals(DeviceInfo.getCarrier(getContext()))) { // ensure tests pass on non-cellular devices
-            json.put("_carrier", DeviceInfo.getCarrier(getContext()));
+        json.put("_device", info.getDevice());
+        json.put("_os", info.getOS());
+        json.put("_os_version", info.getOSVersion());
+        if (!"".equals(info.getCarrier(getContext()))) { // ensure tests pass on non-cellular devices
+            json.put("_carrier", info.getCarrier(getContext()));
         }
-        json.put("_resolution", DeviceInfo.getResolution(getContext()));
-        json.put("_density", DeviceInfo.getDensity(getContext()));
-        json.put("_locale", DeviceInfo.getLocale());
-        json.put("_app_version", DeviceInfo.getAppVersion(getContext()));
+        json.put("_resolution", info.getResolution(getContext()));
+        json.put("_density", info.getDensity(getContext()));
+        json.put("_locale", info.getLocale());
+        json.put("_app_version", info.getAppVersion(getContext()));
+
         final String expected = URLEncoder.encode(json.toString(), "UTF-8");
         assertNotNull(expected);
-        assertEquals(expected, DeviceInfo.getMetrics(getContext()));
+        assertEquals(expected, info.getMetrics(getContext()));
     }
 
     public void testFillJSONIfValuesNotEmpty_noValues() {
+        IDeviceInfo info = new DeviceInfo();
         final JSONObject mockJSON = mock(JSONObject.class);
-        DeviceInfo.fillJSONIfValuesNotEmpty(mockJSON);
+        info.fillJSONIfValuesNotEmpty(mockJSON);
         verifyZeroInteractions(mockJSON);
     }
 
     public void testFillJSONIfValuesNotEmpty_oddNumberOfValues() {
+        IDeviceInfo info = new DeviceInfo();
         final JSONObject mockJSON = mock(JSONObject.class);
-        DeviceInfo.fillJSONIfValuesNotEmpty(mockJSON, "key1", "value1", "key2");
+        info.fillJSONIfValuesNotEmpty(mockJSON, "key1", "value1", "key2");
         verifyZeroInteractions(mockJSON);
     }
 
     public void testFillJSONIfValuesNotEmpty() throws JSONException {
+        IDeviceInfo info = new DeviceInfo();
         final JSONObject json = new JSONObject();
-        DeviceInfo.fillJSONIfValuesNotEmpty(json, "key1", "value1", "key2", null, "key3", "value3", "key4", "", "key5", "value5");
+        info.fillJSONIfValuesNotEmpty(json, "key1", "value1", "key2", null, "key3", "value3", "key4", "", "key5", "value5");
         assertEquals("value1", json.get("key1"));
         assertFalse(json.has("key2"));
         assertEquals("value3", json.get("key3"));

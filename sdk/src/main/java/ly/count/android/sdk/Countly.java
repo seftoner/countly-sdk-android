@@ -122,7 +122,7 @@ public class Countly {
      * Creates a new ConnectionQueue and initializes the session timer.
      */
     Countly() {
-        connectionQueue_ = new ConnectionQueue();
+        connectionQueue_ = new ConnectionQueue(new DeviceInfo());
         Countly.userData = new UserData(connectionQueue_);
         timerService_ = Executors.newSingleThreadScheduledExecutor();
         timerService_.scheduleWithFixedDelay(new Runnable() {
@@ -133,6 +133,15 @@ public class Countly {
         }, TIMER_DELAY_IN_SECONDS, TIMER_DELAY_IN_SECONDS, TimeUnit.SECONDS);
     }
 
+    /**
+     *  Set custom device info provider. For example you want use different app version(not defined in gradle config file)
+     * @param deviceInfo implementation of device info provider
+     * @return Countly instance for easy method chaining
+     */
+    public Countly setDeviceInfoProvider(IDeviceInfo deviceInfo) {
+        this.connectionQueue_.setDeviceInfoProvider(deviceInfo);
+        return this;
+    }
 
     /**
      * Initializes the Countly SDK. Call from your main Activity's onCreate() method.
@@ -154,7 +163,7 @@ public class Countly {
      * Initializes the Countly SDK. Call from your main Activity's onCreate() method.
      * Must be called before other SDK methods can be used.
      * @param context application context
-     * @param serverURL URL of the Countly server to submit data to; use "https://cloud.count.ly" for Countly Cloud
+     * @param serverURL URL of the Countly server to submit data to
      * @param appKey app key for the application being tracked; find in the Countly Dashboard under Management &gt; Applications
      * @param deviceID unique ID for the device the app is running on; note that null in deviceID means that Countly will fall back to OpenUDID, then, if it's not available, to Google Advertising ID
      * @return Countly instance for easy method chaining
@@ -169,7 +178,7 @@ public class Countly {
      * Initializes the Countly SDK. Call from your main Activity's onCreate() method.
      * Must be called before other SDK methods can be used.
      * @param context application context
-     * @param serverURL URL of the Countly server to submit data to; use "https://cloud.count.ly" for Countly Cloud
+     * @param serverURL URL of the Countly server to submit data to
      * @param appKey app key for the application being tracked; find in the Countly Dashboard under Management &gt; Applications
      * @param deviceID unique ID for the device the app is running on; note that null in deviceID means that Countly will fall back to OpenUDID, then, if it's not available, to Google Advertising ID
      * @param idMode enum value specifying which device ID generation strategy Countly should use: OpenUDID or Google Advertising ID
@@ -201,8 +210,8 @@ public class Countly {
             throw new IllegalArgumentException("valid deviceID is required because Advertising ID is not available (you need to include Google Play services 4.0+ into your project)");
         }
         if (eventQueue_ != null && (!connectionQueue_.getServerURL().equals(serverURL) ||
-                                    !connectionQueue_.getAppKey().equals(appKey) ||
-                                    !DeviceId.deviceIDEqualsNullSafe(deviceID, idMode, connectionQueue_.getDeviceId()) )) {
+                !connectionQueue_.getAppKey().equals(appKey) ||
+                !DeviceId.deviceIDEqualsNullSafe(deviceID, idMode, connectionQueue_.getDeviceId()) )) {
             throw new IllegalStateException("Countly cannot be reinitialized with different values");
         }
 
@@ -453,10 +462,10 @@ public class Countly {
     }
 
     /**
-      * Changes current device id to the one specified in parameter. Merges user profile with new id
-      * (if any) with old profile.
-      * @param deviceId new device id
-      */
+     * Changes current device id to the one specified in parameter. Merges user profile with new id
+     * (if any) with old profile.
+     * @param deviceId new device id
+     */
     public void changeDeviceId(String deviceId) {
         if (eventQueue_ == null) {
             throw new IllegalStateException("init must be called before changeDeviceId");
