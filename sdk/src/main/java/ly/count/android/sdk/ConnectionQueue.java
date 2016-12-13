@@ -57,6 +57,10 @@ public class ConnectionQueue {
         this.deviceInfo_ = deviceInfo;
     }
 
+    public ConnectionQueue() {
+        this.deviceInfo_ = new DeviceInfo();
+    }
+
     public void setDeviceInfoProvider(IDeviceInfo deviceInfo) {
         this.deviceInfo_ = deviceInfo;
     }
