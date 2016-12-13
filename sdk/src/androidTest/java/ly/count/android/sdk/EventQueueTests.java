@@ -63,7 +63,7 @@ public class EventQueueTests extends AndroidTestCase {
         final long timestamp = Countly.currentTimestampMs();
         final int hour = Countly.currentHour();
         final int dow = Countly.currentDayOfWeek();
-        final ArgumentCaptor<Integer> arg = ArgumentCaptor.forClass(Integer.class);
+        final ArgumentCaptor<Long> arg = ArgumentCaptor.forClass(Long.class);
 
         mEventQueue.recordEvent(eventKey, segmentation, count, sum, dur);
         verify(mMockCountlyStore).addEvent(eq(eventKey), eq(segmentation), arg.capture(), eq(hour), eq(dow), eq(count), eq(sum), eq(dur));

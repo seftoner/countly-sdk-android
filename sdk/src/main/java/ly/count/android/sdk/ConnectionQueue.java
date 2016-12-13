@@ -167,11 +167,11 @@ public class ConnectionQueue {
         checkInternalState();
         if (duration > 0) {
             final String data = "app_key=" + appKey_
-                    + "&timestamp=" + Countly.currentTimestampMs()
-                    + "&hour=" + Countly.currentHour()
-                    + "&dow=" + Countly.currentDayOfWeek()
-                    + "&session_duration=" + duration
-                    + "&location=" + getCountlyStore().getAndRemoveLocation();
+                              + "&timestamp=" + Countly.currentTimestampMs()
+                              + "&hour=" + Countly.currentHour()
+                              + "&dow=" + Countly.currentDayOfWeek()
+                              + "&session_duration=" + duration
+                              + "&location=" + getCountlyStore().getAndRemoveLocation();
 
             store_.addConnection(data);
 
@@ -229,10 +229,10 @@ public class ConnectionQueue {
     void endSession(final int duration, String deviceIdOverride) {
         checkInternalState();
         String data = "app_key=" + appKey_
-                + "&timestamp=" + Countly.currentTimestampMs()
-                + "&hour=" + Countly.currentHour()
-                + "&dow=" + Countly.currentDayOfWeek()
-                + "&end_session=1";
+                    + "&timestamp=" + Countly.currentTimestampMs()
+                    + "&hour=" + Countly.currentHour()
+                    + "&dow=" + Countly.currentDayOfWeek()
+                    + "&end_session=1";
         if (duration > 0) {
             data += "&session_duration=" + duration;
         }
@@ -312,10 +312,10 @@ public class ConnectionQueue {
     void recordEvents(final String events) {
         checkInternalState();
         final String data = "app_key=" + appKey_
-                + "&timestamp=" + Countly.currentTimestampMs()
-                + "&hour=" + Countly.currentHour()
-                + "&dow=" + Countly.currentDayOfWeek()
-                + "&events=" + events;
+                          + "&timestamp=" + Countly.currentTimestampMs()
+                          + "&hour=" + Countly.currentHour()
+                          + "&dow=" + Countly.currentDayOfWeek()
+                          + "&events=" + events;
 
         store_.addConnection(data);
 
@@ -330,10 +330,10 @@ public class ConnectionQueue {
     void recordLocation(final String events) {
         checkInternalState();
         final String data = "app_key=" + appKey_
-                + "&timestamp=" + Countly.currentTimestampMs()
-                + "&hour=" + Countly.currentHour()
-                + "&dow=" + Countly.currentDayOfWeek()
-                + "&events=" + events;
+                          + "&timestamp=" + Countly.currentTimestampMs()
+                          + "&hour=" + Countly.currentHour()
+                          + "&dow=" + Countly.currentDayOfWeek()
+                          + "&events=" + events;
 
         store_.addConnection(data);
 
