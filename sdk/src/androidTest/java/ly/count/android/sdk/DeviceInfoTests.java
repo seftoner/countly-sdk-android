@@ -84,7 +84,6 @@ public class DeviceInfoTests extends AndroidTestCase {
     }
 
     private Context mockContextForTestingDensity(final int density) {
-        IDeviceInfo info = new DeviceInfo();
         final DisplayMetrics metrics = new DisplayMetrics();
         metrics.densityDpi = density;
         final Resources mockResources = mock(Resources.class);
